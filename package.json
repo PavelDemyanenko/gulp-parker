@@ -1,0 +1,29 @@
+{
+  "name": "gulp-parker",
+  "version": "0.0.1-alpha",
+  "description": "Gulp plugin for parker, a stylesheet analysis tool.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PavelDemyanenko/gulp-parker.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "parker"
+  ],
+  "author": "Pavel Demyanenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PavelDemyanenko/gulp-parker/issues"
+  },
+  "homepage": "https://github.com/PavelDemyanenko/gulp-parker",
+  "dependencies": {
+    "parker": "0.0.8"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.10"
+  }
+}

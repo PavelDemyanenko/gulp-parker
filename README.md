@@ -1,5 +1,4 @@
-# grunt-parker
+# gulp-parker
 
-> Gulp plugin for [parker](https://github.com/katiefenn/parker), a stylesheet analysis tool.
+Gulp plugin for [parker](https://github.com/katiefenn/parker), a stylesheet analysis tool.
 
-* * *

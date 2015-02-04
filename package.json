@@ -1,6 +1,6 @@
 {
   "name": "gulp-parker",
-  "version": "0.0.1-alpha",
+  "version": "0.0.1-alpha.1",
   "description": "Gulp plugin for parker, a stylesheet analysis tool.",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/PavelDemyanenko/gulp-parker",
   "dependencies": {
-    "parker": "0.0.8"
+    "parker": "0.0.8",
+    "through2": "^0.6.3",
+    "gulp-util": "^3.0.3"
   },
   "devDependencies": {
     "gulp": "^3.8.10"

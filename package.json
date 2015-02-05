@@ -1,10 +1,10 @@
 {
   "name": "gulp-parker",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "description": "Gulp plugin for parker, a stylesheet analysis tool.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -23,9 +23,11 @@
   "dependencies": {
     "parker": "0.0.8",
     "through2": "^0.6.3",
-    "gulp-util": "^3.0.3"
+    "gulp-util": "^3.0.3",
+    "object-assign": "^2.0.0"
   },
   "devDependencies": {
-    "gulp": "^3.8.10"
+    "gulp": "^3.8.10",
+    "mocha": "*"
   }
 }

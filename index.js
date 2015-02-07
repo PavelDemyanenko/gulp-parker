@@ -2,7 +2,7 @@
 var gutil = require('gulp-util');
 var through = require('through2');
 var objectAssign = require('object-assign');
-var parker = require('parker');
+var Parker = require('parker');
 
 module.exports = function (opts) {
 	opts = opts || {};
@@ -18,16 +18,16 @@ module.exports = function (opts) {
 			return;
 		}
 
-		var res;
+		var res, metrics, parker, parkerMetrics;
 		var fileOpts = objectAssign({}, opts);
 
 		try {
-			res = parker(fileOpts).process(file.contents.toString(), {
-				from: file.relative,
-				to: file.relative
-			});
-
-			file.contents = new Buffer(res.css);
+			console.log(file, file.path);
+			metrics = require("parker/metrics/All.js");
+			parker = new Parker(metrics);
+			parkerMetrics = parker.run(file, file.path);
+			console.log(parkerMetrics);
+			//file.contents = new Buffer(result);
 
 			this.push(file);
 		} catch (err) {

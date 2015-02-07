@@ -13,7 +13,10 @@ it('should parker CSS', function (cb) {
 	stream.on('end', cb);
 
 	stream.write(new gutil.File({
-
+		cwd: __dirname,
+		base: __dirname + '/fixture',
+		path: __dirname + '/fixture/fixture.css',
+		contents: new Buffer('a {\n\tdisplay: flex;\n}')
 	}));
 
 	stream.end();

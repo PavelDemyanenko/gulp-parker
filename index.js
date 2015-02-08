@@ -3,6 +3,7 @@ var gutil = require('gulp-util');
 var through = require('through2');
 var objectAssign = require('object-assign');
 var Parker = require('parker');
+var fs = require('fs');
 
 module.exports = function (opts) {
 	opts = opts || {};
@@ -18,7 +19,7 @@ module.exports = function (opts) {
 			return;
 		}
 
-		var kindOf, kindsOf, metrics, aLogFileLines, aMetrics, oMetric, oOptions, oParsedMetrics, parker, sDefaultTitle, sMetric, sTitle, _i, _len;
+		var kindOf, kindsOf, metrics, aLogFileLines, aMetrics, oMetric, oOptions, oParsedMetrics, parker, sDefaultTitle, sMetric, sTitle;
 
 		kindsOf = {};
 
@@ -48,11 +49,9 @@ module.exports = function (opts) {
 
 			if (Array.isArray(oOptions.metrics)) {
 				aMetrics = (function() {
-					var _i, _len, _ref, _results;
-					_ref = oOptions.metrics;
-					_results = [];
-					for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-						sMetric = _ref[_i];
+					var _results = [];
+					for (var i = 0; i < oOptions.metrics.length; i++) {
+						sMetric = oOptions.metrics[i];
 						_results.push(require("parker/metrics/" + sMetric + ".js"));
 					}
 					return _results;
@@ -63,8 +62,8 @@ module.exports = function (opts) {
 
 			parker = new Parker(aMetrics);
 			oParsedMetrics = {};
-			for (_i = 0, _len = aMetrics.length; _i < _len; _i++) {
-				oMetric = aMetrics[_i];
+			for (var i = 0; i < aMetrics.length; i++) {
+				oMetric = aMetrics[i];
 				oParsedMetrics[oMetric.id] = oMetric;
 			}
 
@@ -81,7 +80,7 @@ module.exports = function (opts) {
 				aLogFileLines.push("");
 			}
 
-			var aFileResults, aResult, aResults, mValue, oParkerMetrics, sResult, sValue, _j, _len1;
+			var aFileResults, aResult, aResults, mValue, oParkerMetrics, sResult, sValue;
 			aResults = [];
 			aFileResults = [];
 			oParkerMetrics = parker.run(file, file.path);
@@ -92,23 +91,20 @@ module.exports = function (opts) {
 				}
 				if (aResults.length) {
 					gutil.log(file.path);
-					for (_j = 0, _len1 = aResults.length; _j < _len1; _j++) {
-						aResult = aResults[_j];
+					for (var j = 0; j < aResults.length; j++) {
+						aResult = aResults[j];
 						sValue = (function() {
-							var _k, _l, _len2, _len3, _ref, _ref1, _results;
 							switch (kindOf(aResult[1])) {
 								case "array":
 									gutil.log(gutil.colors.cyan("" + aResult[0] + ":"));
-									_ref = aResult[1];
-									for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
-										sResult = _ref[_k];
+									for (var k = 0; k < aResult[1].length; k++) {
+										sResult = aResult[k];
 										gutil.log("\t" + sResult);
 									}
 									aFileResults.push("- **" + aResult[0] + ":**");
-									_ref1 = aResult[1];
-									_results = [];
-									for (_l = 0, _len3 = _ref1.length; _l < _len3; _l++) {
-										sResult = _ref1[_l];
+									var _results = [];
+									for (var l = 0; l < aResult[1].length; l++) {
+										sResult = aResult[l];
 										if (sResult.substring(0, 1) === "#") {
 											sResult = "`" + sResult + "`";
 										}
@@ -138,7 +134,7 @@ module.exports = function (opts) {
 				aLogFileLines.push("");
 				aLogFileLines.push("Last generated: " + (gutil.date(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
 				aLogFileLines.push("");
-				require('fs').writeFile(oOptions.file, aLogFileLines.join("\n"));
+				fs.writeFile(oOptions.file, aLogFileLines.join("\n"));
 				gutil.log("Logged in " + (gutil.colors.yellow(oOptions.file)));
 			}
 

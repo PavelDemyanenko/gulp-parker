@@ -7,7 +7,7 @@ it('should parker CSS', function (cb) {
 	var stream = parker();
 
 	stream.on('data', function (file) {
-
+		assert.equal(file.relative, 'fixture.css');
 	});
 
 	stream.on('end', cb);

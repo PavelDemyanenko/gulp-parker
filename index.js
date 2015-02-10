@@ -6,7 +6,16 @@ var Parker = require('parker');
 var fs = require('fs');
 
 module.exports = function (opts) {
-	opts = opts || {};
+
+	var oDefaultOptions;
+
+	oDefaultOptions = {
+		metrics: false,
+		file: "report.md",
+		title: false
+	};
+
+	opts = opts || oDefaultOptions ;
 
 	return through.obj(function (file, enc, cb) {
 		if (file.isNull()) {
@@ -19,7 +28,7 @@ module.exports = function (opts) {
 			return;
 		}
 
-		var kindOf, kindsOf, metrics, aLogFileLines, aMetrics, oMetric, oOptions, oParsedMetrics, parker, sDefaultTitle, sMetric, sTitle;
+		var kindOf, kindsOf, metrics, aLogFileLines, aMetrics, oMetric, oParsedMetrics, parker, sDefaultTitle, sMetric, sTitle;
 
 		kindsOf = {};
 
@@ -34,24 +43,18 @@ module.exports = function (opts) {
 			return kindsOf[kindsOf.toString.call(value)] || "object";
 		};
 
-		//var fileOpts = objectAssign({}, opts);
+		var fileOpts = objectAssign({}, opts);
 
 		try {
-
-			oOptions = {
-				metrics: false,
-				file: "report.md",
-				title: false
-			};
 
 			aLogFileLines = [];
 			sDefaultTitle = "Gulp Parker Report";
 
-			if (Array.isArray(oOptions.metrics)) {
+			if (Array.isArray(fileOpts.metrics)) {
 				aMetrics = (function() {
 					var _results = [];
-					for (var i = 0; i < oOptions.metrics.length; i++) {
-						sMetric = oOptions.metrics[i];
+					for (var i = 0; i < fileOpts.metrics.length; i++) {
+						sMetric = fileOpts.metrics[i];
 						_results.push(require("parker/metrics/" + sMetric + ".js"));
 					}
 					return _results;
@@ -67,8 +70,8 @@ module.exports = function (opts) {
 				oParsedMetrics[oMetric.id] = oMetric;
 			}
 
-			if (oOptions.file) {
-				if (sTitle = oOptions.title || sDefaultTitle) {
+			if (fileOpts.file) {
+				if (sTitle = fileOpts.title || sDefaultTitle) {
 					aLogFileLines.push("# " + sTitle);
 					aLogFileLines.push("");
 					if (sTitle !== sDefaultTitle) {
@@ -122,21 +125,22 @@ module.exports = function (opts) {
 						})();
 					}
 				}
-				if (oOptions.file && aFileResults.length) {
+				if (fileOpts.file && aFileResults.length) {
 					aLogFileLines.push("### " + file.path);
 					aLogFileLines.push("");
 					aLogFileLines = aLogFileLines.concat(aFileResults);
 				}
 			}
-			if (oOptions.file) {
+			if (fileOpts.file) {
 				aLogFileLines.push("");
 				aLogFileLines.push("* * *");
 				aLogFileLines.push("");
 				aLogFileLines.push("Last generated: " + (gutil.date(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
 				aLogFileLines.push("");
-				fs.writeFile(oOptions.file, aLogFileLines.join("\n"));
-				gutil.log("Logged in " + (gutil.colors.yellow(oOptions.file)));
+				fs.writeFile(fileOpts.file, aLogFileLines.join("\n"));
+				gutil.log("Logged in " + (gutil.colors.yellow(fileOpts.file)));
 			}
+			this.push(file);
 
 		} catch (err) {
 			this.emit('error', new gutil.PluginError('gulp-parker', err, {fileName: file.path}));

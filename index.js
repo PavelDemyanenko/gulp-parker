@@ -140,7 +140,7 @@ module.exports = function (opts) {
 				fs.writeFile(fileOpts.file, aLogFileLines.join("\n"));
 				gutil.log("Logged in " + (gutil.colors.yellow(fileOpts.file)));
 			}
-
+			this.push(aResults);
 		} catch (err) {
 			this.emit('error', new gutil.PluginError('gulp-parker', err, {fileName: file.path}));
 		}

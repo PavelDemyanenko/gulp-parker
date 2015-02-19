@@ -86,7 +86,7 @@ module.exports = function (opts) {
 			var aFileResults, aResult, aResults, mValue, oParkerMetrics, sResult, sValue;
 			aResults = [];
 			aFileResults = [];
-			oParkerMetrics = parker.run(file, file.path);
+			oParkerMetrics = parker.run(file.contents.toString());
 			if (oParkerMetrics) {
 				for (sMetric in oParkerMetrics) {
 					mValue = oParkerMetrics[sMetric];
@@ -101,17 +101,17 @@ module.exports = function (opts) {
 								case "array":
 									gutil.log(gutil.colors.cyan("" + aResult[0] + ":"));
 									for (var k = 0; k < aResult[1].length; k++) {
-										sResult = aResult[k];
+										sResult = aResult[1][k];
 										gutil.log("\t" + sResult);
 									}
 									aFileResults.push("- **" + aResult[0] + ":**");
 									var _results = [];
 									for (var l = 0; l < aResult[1].length; l++) {
-										sResult = aResult[l];
+										sResult = aResult[1][l];
 										if (sResult.substring(0, 1) === "#") {
 											sResult = "`" + sResult + "`";
 										}
-										_results.push(aFileResults.push("\t- " + sResult));
+										_results.push(aFileResults.push("\t=- " + sResult));
 									}
 									return _results;
 									break;
@@ -140,7 +140,6 @@ module.exports = function (opts) {
 				fs.writeFile(fileOpts.file, aLogFileLines.join("\n"));
 				gutil.log("Logged in " + (gutil.colors.yellow(fileOpts.file)));
 			}
-			this.push(file);
 
 		} catch (err) {
 			this.emit('error', new gutil.PluginError('gulp-parker', err, {fileName: file.path}));

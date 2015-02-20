@@ -1,8 +1,8 @@
-# gulp-parker [![Build Status](https://travis-ci.org/PavelDemyanenko/gulp-parker.svg?branch=master)](https://travis-ci.org/PavelDemyanenko/gulp-parker) 
+# gulp-parker [![Build Status](https://travis-ci.org/PavelDemyanenko/gulp-parker.svg?branch=master)](https://travis-ci.org/PavelDemyanenko/gulp-parker)
 [![NPM version][npm-version-image]][npm-url] ![Dependency Status](https://david-dm.org/PavelDemyanenko/gulp-parker.svg) [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url]
 
 > Gulp plugin for [parker](https://github.com/katiefenn/parker), a stylesheet analysis tool.
-  
+
 *  Took code, ideas from [@leny](https://github.com/leny) and made it work with Gulp.
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
@@ -44,7 +44,7 @@ Type: `Array` (metric names)
 Default value: `false`
 
 An array of the metrics to use in parker.  
-By default, grunt-parker use all available metrics.
+By default, gulp-parker use all available metrics.
 
 By now, gulp-parker accepts the following metrics :
 
@@ -77,7 +77,7 @@ If `false` is given, the file will not be written.
 #### options.title
 
 Type: `String`  
-Default value: `Grunt Parker Report`
+Default value: `Gulp Parker Report`
 
 When logging the reported results to file, use this as title of the markdown document.
 

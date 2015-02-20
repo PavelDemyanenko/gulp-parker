@@ -4,7 +4,13 @@ var parker = require('..');
 
 gulp.task('parker', function() {
 	return gulp.src('./*.css')
-		.pipe(parker());
+		.pipe(parker({
+			file: 'report.md',
+			title: 'Gulp test report',
+			metrics: [
+				"TotalRules",
+				"TotalStylesheets"
+			]}));
 });
 
 gulp.task('default', ['parker']);

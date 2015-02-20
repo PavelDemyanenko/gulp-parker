@@ -3,7 +3,7 @@ var parker = require('..');
 
 
 gulp.task('parker', function() {
-	return gulp.src('./test.css')
+	return gulp.src('./*.css')
 		.pipe(parker());
 });
 

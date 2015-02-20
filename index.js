@@ -71,14 +71,18 @@ module.exports = function (opts) {
 			}
 
 			if (fileOpts.file) {
-				if (sTitle = fileOpts.title || sDefaultTitle) {
-					aLogFileLines.push("# " + sTitle);
-					aLogFileLines.push("");
-					if (sTitle !== sDefaultTitle) {
-						aLogFileLines.push("## Parker Report");
+				if (!fs.existsSync(fileOpts.file)) {
+					if (sTitle = fileOpts.title || sDefaultTitle) {
+						aLogFileLines.push("# " + sTitle);
+						aLogFileLines.push("");
+						if (sTitle !== sDefaultTitle) {
+							aLogFileLines.push("## Parker Report");
+						}
+					} else {
+						aLogFileLines.push("# " + sDefaultTitle);
 					}
-				} else {
-					aLogFileLines.push("# " + sDefaultTitle);
+					aLogFileLines.push("");
+					aLogFileLines.push("Last generated: " + (gutil.date(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
 				}
 				aLogFileLines.push("");
 			}
@@ -135,9 +139,11 @@ module.exports = function (opts) {
 				aLogFileLines.push("");
 				aLogFileLines.push("* * *");
 				aLogFileLines.push("");
-				aLogFileLines.push("Last generated: " + (gutil.date(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
-				aLogFileLines.push("");
-				fs.writeFile(fileOpts.file, aLogFileLines.join("\n"));
+				if (fs.existsSync(fileOpts.file)) {
+					fs.appendFile(fileOpts.file, aLogFileLines.join("\n"));
+				} else {
+					fs.writeFile(fileOpts.file, aLogFileLines.join("\n"));
+				}
 				gutil.log("Logged in " + (gutil.colors.yellow(fileOpts.file)));
 			}
 			this.push(aResults);

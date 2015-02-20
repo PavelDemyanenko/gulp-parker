@@ -8,7 +8,11 @@ var parker = require('./');
 it('should parker CSS', function (cb) {
 	var stream = parker({
 		file: 'report.md',
-		title: 'Gulp test report'
+		title: 'Gulp test report',
+		metrics: [
+			"TotalRules",
+			"TotalStylesheets"
+		]
 	});
 
 	var buffer = [];
@@ -22,7 +26,7 @@ it('should parker CSS', function (cb) {
 		rimraf.sync('report.md');
 		assert.equal(buffer.length, 1);
 		assert.deepEqual(buffer[0][0], ["Total Stylesheets", 1]);
-		assert.deepEqual(buffer[0][2], ["Total Rules", 4]);
+		assert.deepEqual(buffer[0][1], ["Total Rules", 4]);
 		cb();
 	});
 

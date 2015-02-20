@@ -11,7 +11,7 @@ module.exports = function (opts) {
 
 	oDefaultOptions = {
 		metrics: false,
-		file: "report.md",
+		file: false,
 		title: false
 	};
 
@@ -81,8 +81,6 @@ module.exports = function (opts) {
 					} else {
 						aLogFileLines.push("# " + sDefaultTitle);
 					}
-					aLogFileLines.push("");
-					aLogFileLines.push("Last generated: " + (gutil.date(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
 				}
 				aLogFileLines.push("");
 			}
@@ -138,6 +136,8 @@ module.exports = function (opts) {
 			if (fileOpts.file) {
 				aLogFileLines.push("");
 				aLogFileLines.push("* * *");
+				aLogFileLines.push("");
+				aLogFileLines.push("Last generated: " + (gutil.date(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
 				aLogFileLines.push("");
 				if (fs.existsSync(fileOpts.file)) {
 					fs.appendFile(fileOpts.file, aLogFileLines.join("\n"));

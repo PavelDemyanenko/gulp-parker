@@ -6,7 +6,10 @@ var fs = require('fs');
 var parker = require('./');
 
 it('should parker CSS', function (cb) {
-	var stream = parker();
+	var stream = parker({
+		file: 'report.md',
+		title: 'Gulp test report'
+	});
 
 	var buffer = [];
 

@@ -15,7 +15,7 @@ module.exports = function (opts) {
 		title: false
 	};
 
-	opts = opts || oDefaultOptions ;
+	opts = opts || oDefaultOptions;
 
 	return through.obj(function (file, enc, cb) {
 		if (file.isNull()) {
@@ -43,7 +43,9 @@ module.exports = function (opts) {
 			return kindsOf[kindsOf.toString.call(value)] || "object";
 		};
 
-		var fileOpts = objectAssign({}, opts);
+		var fileOpts = objectAssign(oDefaultOptions, opts);
+
+		console.log("fileOpts", fileOpts);
 
 		try {
 

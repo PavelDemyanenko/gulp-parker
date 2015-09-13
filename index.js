@@ -130,7 +130,7 @@ module.exports = function (opts) {
 					}
 				}
 				if (fileOpts.file && aFileResults.length) {
-					aLogFileLines.push("### " + file.path);
+					aLogFileLines.push("### " + file.path.replace(__dirname + '/', ''));
 					aLogFileLines.push("");
 					aLogFileLines = aLogFileLines.concat(aFileResults);
 				}

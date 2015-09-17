@@ -32,8 +32,8 @@ it('should parker CSS', function (cb) {
 
 	stream.write(new gutil.File({
 		cwd: __dirname,
-		base: __dirname + '/fixture',
-		path: __dirname + '/fixture/fixture.css',
+		base: '/fixture',
+		path: '/fixture/fixture.css',
 		contents: new Buffer('a {\n\tdisplay: flex;\n}' +
 							' .black {\n\tcolor: black !important;\n}' +
 							' #black {\n\tcolor: #000;\n} ' +

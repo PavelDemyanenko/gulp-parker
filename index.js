@@ -45,8 +45,6 @@ module.exports = function (opts) {
 
 		var fileOpts = objectAssign(oDefaultOptions, opts);
 
-		console.log("fileOpts", fileOpts);
-
 		try {
 
 			aLogFileLines = [];

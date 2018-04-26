@@ -1,5 +1,8 @@
 'use strict';
-var gutil = require('gulp-util');
+var PluginError = require('plugin-error');
+var log = require('fancy-log');
+var colors = require('ansi-colors');
+var format = require('date-format');
 var through = require('through2');
 var objectAssign = require('object-assign');
 var Parker = require('parker');
@@ -24,7 +27,7 @@ module.exports = function (opts) {
 		}
 
 		if (file.isStream()) {
-			cb(new gutil.PluginError('gulp-parker', 'Streaming not supported'));
+			cb(new PluginError('gulp-parker', 'Streaming not supported'));
 			return;
 		}
 
@@ -95,16 +98,16 @@ module.exports = function (opts) {
 					aResults.push([oParsedMetrics[sMetric].name, mValue]);
 				}
 				if (aResults.length) {
-					gutil.log(file.path);
+					log(file.path);
 					for (var j = 0; j < aResults.length; j++) {
 						aResult = aResults[j];
 						sValue = (function() {
 							switch (kindOf(aResult[1])) {
 								case "array":
-									gutil.log(gutil.colors.cyan("" + aResult[0] + ":"));
+									log(colors.cyan("" + aResult[0] + ":"));
 									for (var k = 0; k < aResult[1].length; k++) {
 										sResult = aResult[1][k];
-										gutil.log("\t" + sResult);
+										log("\t" + sResult);
 									}
 									aFileResults.push("- **" + aResult[0] + ":**");
 									var _results = [];
@@ -118,10 +121,10 @@ module.exports = function (opts) {
 									return _results;
 									break;
 								case "number":
-									gutil.log(gutil.colors.cyan("" + aResult[0] + ":"), gutil.colors.yellow(aResult[1]));
+									log(colors.cyan("" + aResult[0] + ":"), colors.yellow(aResult[1]));
 									return aFileResults.push("- **" + aResult[0] + ":** " + aResult[1]);
 								default:
-									gutil.log(gutil.colors.cyan("" + aResult[0] + ":"), aResult[1]);
+									log(colors.cyan("" + aResult[0] + ":"), aResult[1]);
 									return aFileResults.push("- **" + aResult[0] + ":** " + aResult[1]);
 							}
 						})();
@@ -137,18 +140,18 @@ module.exports = function (opts) {
 				aLogFileLines.push("");
 				aLogFileLines.push("* * *");
 				aLogFileLines.push("");
-				aLogFileLines.push("Last generated: " + (gutil.date(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
+				aLogFileLines.push("Last generated: " + (format(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
 				aLogFileLines.push("");
 				if (fs.existsSync(fileOpts.file)) {
 					fs.appendFile(fileOpts.file, aLogFileLines.join("\n"));
 				} else {
 					fs.writeFile(fileOpts.file, aLogFileLines.join("\n"));
 				}
-				gutil.log("Logged in " + (gutil.colors.yellow(fileOpts.file)));
+				log("Logged in " + (colors.yellow(fileOpts.file)));
 			}
 			this.push(aResults);
 		} catch (err) {
-			this.emit('error', new gutil.PluginError('gulp-parker', err, {fileName: file.path}));
+			this.emit('error', new PluginError('gulp-parker', err, {fileName: file.path}));
 		}
 
 		cb();

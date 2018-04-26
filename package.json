@@ -22,13 +22,13 @@
   "homepage": "https://github.com/PavelDemyanenko/gulp-parker",
   "dependencies": {
     "parker": "0.0.10",
-    "through2": "^0.6.3",
-    "gulp-util": "^3.0.3",
-    "object-assign": "^2.0.0"
+    "through2": "2.0.3",
+    "gulp-util": "3.0.8",
+    "object-assign": "4.1.1"
   },
   "devDependencies": {
-    "gulp": "^3.8.10",
+    "gulp": "3.9.1",
     "mocha": "*",
-    "rimraf": "^2.2.8"
+    "rimraf": "2.6.2"
   }
 }

@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/PavelDemyanenko/gulp-parker",
   "dependencies": {
-    "parker": "0.0.8",
+    "parker": "0.0.10",
     "through2": "^0.6.3",
     "gulp-util": "^3.0.3",
     "object-assign": "^2.0.0"

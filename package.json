@@ -1,6 +1,6 @@
 {
   "name": "gulp-parker",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Gulp plugin for parker, a stylesheet analysis tool.",
   "main": "index.js",
   "scripts": {

@@ -1,7 +1,7 @@
 'use strict';
 var assert = require('assert');
-var gutil = require('gulp-util');
 var rimraf = require('rimraf');
+var Vinyl = require('vinyl');
 var fs = require('fs');
 var parker = require('./');
 
@@ -30,7 +30,7 @@ it('should parker CSS', function (cb) {
 		cb();
 	});
 
-	stream.write(new gutil.File({
+	stream.write(new Vinyl({
 		base: '/fixture',
 		path: '/fixture/fixture.css',
 		contents: new Buffer('a {\n\tdisplay: flex;\n}' +

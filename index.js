@@ -142,7 +142,7 @@ module.exports = function (opts) {
 				aLogFileLines.push("");
 				aLogFileLines.push("Last generated: " + (format(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
 				aLogFileLines.push("");
-				fs.writeFile(fileOpts.file, aLogFileLines.join("\n"));
+				fs.writeFile(fileOpts.file, aLogFileLines.join("\n"), () => {});
 				log("Logged in " + (colors.yellow(fileOpts.file)));
 			}
 			this.push(aResults);

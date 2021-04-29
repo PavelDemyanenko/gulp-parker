@@ -33,6 +33,6 @@
   "devDependencies": {
     "gulp": "3.9.1",
     "mocha": "*",
-    "rimraf": "2.6.2"
+    "rimraf": "3.0.2"
   }
 }

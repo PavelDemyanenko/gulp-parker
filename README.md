@@ -15,7 +15,7 @@
 
 ## Getting Started
 
-This plugin requires Node.js `>=20` and works with Gulp 4 and Gulp 5.
+This plugin requires Node.js `>=20` and Gulp 4 or newer (tested with Gulp 5).
 
 If you haven't used [Gulp](https://gulpjs.com/) before, be sure to check out the [Getting Started](https://gulpjs.com/docs/en/getting-started/quick-start). Once you're familiar with that process, you may install this plugin with this command:
 
@@ -51,9 +51,10 @@ Type: `Array` (metric names)
 Default value: `false`
 
 An array of the metrics to use in parker.  
-By default, gulp-parker use all available metrics.
+By default, gulp-parker uses all available metrics.
+An unknown metric name throws an error.
 
-By now, gulp-parker accepts the following metrics :
+The following metrics are available:
 
 - `TotalStylesheets`
 - `TotalStylesheetSize`
@@ -93,7 +94,7 @@ When logging the reported results to file, use this as title of the markdown doc
 
 #### Default Options
 
-In this example, the default options are used to shows the results of the parker analysis for the given files.
+In this example, the default options are used to show the results of the parker analysis for the given files.
 
 ```js
 exports.parker = function () {
@@ -104,7 +105,7 @@ exports.parker = function () {
 
 #### Custom Options
 
-In this example, custom options are used to shows the results of the parker analysis for the given files, with only the two given metrics, and write the results on a file named `report.md`
+In this example, custom options are used to show the results of the parker analysis for the given files, with only the two given metrics, and the results are written to a file named `report.md`.
 
 ```js
 exports.parker = function () {
@@ -120,6 +121,33 @@ exports.parker = function () {
 };
 ```
 
+#### Using the results in your own code
+
+Each file keeps its results in `file.parker`, keyed by metric id (kebab-case, e.g. `total-rules`, `unique-colours`):
+
+```js
+const { src, dest } = require('gulp');
+const parker = require('gulp-parker');
+
+exports.parker = function () {
+	return src('./*.css')
+		.pipe(parker({ metrics: ['TotalRules', 'TotalImportantKeywords'] }))
+		.on('data', (file) => {
+			if (file.parker['total-important-keywords'] > 0) {
+				console.warn(`${file.relative} uses !important`);
+			}
+		})
+		.pipe(dest('dist'));
+};
+```
+
+## Upgrading from 0.x
+
+- Node.js 20+ is required.
+- The stream now emits the original Vinyl files instead of `[metricName, value]` arrays.
+  If you listened to `data` events for results, read `file.parker` instead.
+- The report file now includes every processed file, not only the last one.
+
 ## Contributing
 
 Run the test suite with `npm test`.
@@ -129,16 +157,16 @@ Run the test suite with `npm test`.
 * **2015/02/20** : v0.1.0
 
 * **2018/04/27** : v0.1.6
-Update Parker;
-Replace result file, not append;
-Remove logging
+  - Update Parker
+  - Replace result file, not append
+  - Remove logging
 
 * **2026/11/03** : v1.0.0 (breaking)
-Requires Node.js 20+; tested with Gulp 5;
-Vinyl files are now passed through (results available as `file.parker`) instead of emitting result arrays;
-The markdown report now contains every processed file (previously only the last one) and is written once at the end of the stream;
-Fixed broken date in the report footer and file paths in report headings;
-Unknown metric names now throw a clear error;
-Dropped `through2`, `object-assign`, `date-format`; updated `plugin-error`, `fancy-log`, `ansi-colors`;
-Parker's CLI entry point (and its `minimist`/`cli-color` dependencies) is no longer loaded;
-Travis CI replaced with GitHub Actions
+  - Requires Node.js 20+; tested with Gulp 5
+  - Vinyl files are now passed through (results available as `file.parker`) instead of emitting result arrays
+  - The markdown report now contains every processed file (previously only the last one) and is written once at the end of the stream
+  - Fixed broken date in the report footer and file paths in report headings
+  - Unknown metric names now throw a clear error
+  - Dropped `through2`, `object-assign`, `date-format`; updated `plugin-error`, `fancy-log`, `ansi-colors`
+  - Parker's CLI entry point (and its `minimist`/`cli-color` dependencies) is no longer loaded
+  - Travis CI replaced with GitHub Actions

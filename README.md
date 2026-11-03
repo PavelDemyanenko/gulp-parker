@@ -152,6 +152,13 @@ exports.parker = function () {
 
 Run the test suite with `npm test`.
 
+Releases are published to npm by GitHub Actions (trusted publishing) when a version tag is pushed:
+
+```shell
+npm version patch   # bumps package.json and creates the vX.Y.Z tag
+git push --follow-tags
+```
+
 ## Release History
 
 * **2015/02/20** : v0.1.0

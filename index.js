@@ -1,155 +1,155 @@
 'use strict';
-var PluginError = require('plugin-error');
-var log = require('fancy-log');
-var colors = require('ansi-colors');
-var format = require('date-format');
-var through = require('through2');
-var objectAssign = require('object-assign');
-var Parker = require('parker');
-var fs = require('fs');
 
-module.exports = function (opts) {
+const fs = require('node:fs');
+const path = require('node:path');
+const { Transform } = require('node:stream');
+const PluginError = require('plugin-error');
+const log = require('fancy-log');
+const colors = require('ansi-colors');
+// Require the library directly instead of `parker` (its CLI entry point),
+// so the CLI-only dependencies (minimist, cli-color, async) are never loaded.
+const Parker = require('parker/lib/Parker.js');
 
-	var oDefaultOptions;
+const PLUGIN_NAME = 'gulp-parker';
+const DEFAULT_TITLE = 'Gulp Parker Report';
 
-	oDefaultOptions = {
-		metrics: false,
-		file: false,
-		title: false
-	};
+function loadMetrics(names) {
+	if (names === undefined || names === null || names === false) {
+		return require('parker/metrics/All.js');
+	}
 
-	opts = opts || oDefaultOptions;
+	if (!Array.isArray(names)) {
+		throw new PluginError(PLUGIN_NAME, '`metrics` option must be an array of metric names');
+	}
 
-	return through.obj(function (file, enc, cb) {
-		if (file.isNull()) {
-			cb(null, file);
-			return;
+	return names.map((name) => {
+		if (typeof name !== 'string' || !/^[A-Za-z]+$/.test(name)) {
+			throw new PluginError(PLUGIN_NAME, `Invalid metric name: ${JSON.stringify(name)}`);
 		}
-
-		if (file.isStream()) {
-			cb(new PluginError('gulp-parker', 'Streaming not supported'));
-			return;
-		}
-
-		var kindOf, kindsOf, metrics, aLogFileLines, aMetrics, oMetric, oParsedMetrics, parker, sDefaultTitle, sMetric, sTitle;
-
-		kindsOf = {};
-
-		"Number String Boolean Function RegExp Array Date Error".split(" ").forEach(function(k) {
-			return kindsOf["[object " + k + "]"] = k.toLowerCase();
-		});
-
-		kindOf = function(value) {
-			if (value == null) {
-				return String(value);
-			}
-			return kindsOf[kindsOf.toString.call(value)] || "object";
-		};
-
-		var fileOpts = objectAssign(oDefaultOptions, opts);
-
 		try {
-
-			aLogFileLines = [];
-			sDefaultTitle = "Gulp Parker Report";
-
-			if (Array.isArray(fileOpts.metrics)) {
-				aMetrics = (function() {
-					var _results = [];
-					for (var i = 0; i < fileOpts.metrics.length; i++) {
-						sMetric = fileOpts.metrics[i];
-						_results.push(require("parker/metrics/" + sMetric + ".js"));
-					}
-					return _results;
-				})();
-			} else {
-				aMetrics = require("parker/metrics/All.js");
-			}
-
-			parker = new Parker(aMetrics);
-			oParsedMetrics = {};
-			for (var i = 0; i < aMetrics.length; i++) {
-				oMetric = aMetrics[i];
-				oParsedMetrics[oMetric.id] = oMetric;
-			}
-
-			if (fileOpts.file) {
-				if (!fs.existsSync(fileOpts.file)) {
-					if (sTitle = fileOpts.title || sDefaultTitle) {
-						aLogFileLines.push("# " + sTitle);
-						aLogFileLines.push("");
-						if (sTitle !== sDefaultTitle) {
-							aLogFileLines.push("## Parker Report");
-						}
-					} else {
-						aLogFileLines.push("# " + sDefaultTitle);
-					}
-				}
-				aLogFileLines.push("");
-			}
-
-			var aFileResults, aResult, aResults, mValue, oParkerMetrics, sResult, sValue;
-			aResults = [];
-			aFileResults = [];
-			oParkerMetrics = parker.run(file.contents.toString());
-			if (oParkerMetrics) {
-				for (sMetric in oParkerMetrics) {
-					mValue = oParkerMetrics[sMetric];
-					aResults.push([oParsedMetrics[sMetric].name, mValue]);
-				}
-				if (aResults.length) {
-					log(file.path);
-					for (var j = 0; j < aResults.length; j++) {
-						aResult = aResults[j];
-						sValue = (function() {
-							switch (kindOf(aResult[1])) {
-								case "array":
-									log(colors.cyan("" + aResult[0] + ":"));
-									for (var k = 0; k < aResult[1].length; k++) {
-										sResult = aResult[1][k];
-										log("\t" + sResult);
-									}
-									aFileResults.push("- **" + aResult[0] + ":**");
-									var _results = [];
-									for (var l = 0; l < aResult[1].length; l++) {
-										sResult = aResult[1][l];
-										if (sResult.substring(0, 1) === "#") {
-											sResult = "`" + sResult + "`";
-										}
-										_results.push(aFileResults.push("\t=- " + sResult));
-									}
-									return _results;
-									break;
-								case "number":
-									log(colors.cyan("" + aResult[0] + ":"), colors.yellow(aResult[1]));
-									return aFileResults.push("- **" + aResult[0] + ":** " + aResult[1]);
-								default:
-									log(colors.cyan("" + aResult[0] + ":"), aResult[1]);
-									return aFileResults.push("- **" + aResult[0] + ":** " + aResult[1]);
-							}
-						})();
-					}
-				}
-				if (fileOpts.file && aFileResults.length) {
-					aLogFileLines.push("### " + file.path.replace(__dirname + '/', ''));
-					aLogFileLines.push("");
-					aLogFileLines = aLogFileLines.concat(aFileResults);
-				}
-			}
-			if (fileOpts.file) {
-				aLogFileLines.push("");
-				aLogFileLines.push("* * *");
-				aLogFileLines.push("");
-				aLogFileLines.push("Last generated: " + (format(new Date(), 'mm/dd/yyyy, HH:MM:ss')) + " by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).");
-				aLogFileLines.push("");
-				fs.writeFile(fileOpts.file, aLogFileLines.join("\n"), () => {});
-				log("Logged in " + (colors.yellow(fileOpts.file)));
-			}
-			this.push(aResults);
+			return require(`parker/metrics/${name}.js`);
 		} catch (err) {
-			this.emit('error', new PluginError('gulp-parker', err, {fileName: file.path}));
+			if (err.code === 'MODULE_NOT_FOUND') {
+				throw new PluginError(PLUGIN_NAME, `Unknown metric: "${name}"`);
+			}
+			throw err;
 		}
+	});
+}
 
-		cb();
+function pad(n) {
+	return String(n).padStart(2, '0');
+}
+
+function formatDate(date) {
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+		`${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+function formatListItem(value) {
+	const str = String(value);
+	return str.startsWith('#') ? `\`${str}\`` : str;
+}
+
+function logResults(filePath, rows) {
+	log(filePath);
+	for (const [name, value] of rows) {
+		if (Array.isArray(value)) {
+			log(colors.cyan(`${name}:`));
+			for (const item of value) {
+				log(`\t${item}`);
+			}
+		} else if (typeof value === 'number') {
+			log(colors.cyan(`${name}:`), colors.yellow(String(value)));
+		} else {
+			log(colors.cyan(`${name}:`), value);
+		}
+	}
+}
+
+function buildReport(title, sections) {
+	const lines = [`# ${title}`, ''];
+
+	for (const { filePath, rows } of sections) {
+		lines.push(`### ${filePath}`, '');
+		for (const [name, value] of rows) {
+			if (Array.isArray(value)) {
+				lines.push(`- **${name}:**`);
+				for (const item of value) {
+					lines.push(`  - ${formatListItem(item)}`);
+				}
+			} else {
+				lines.push(`- **${name}:** ${value}`);
+			}
+		}
+		lines.push('');
+	}
+
+	lines.push(
+		'* * *',
+		'',
+		`Last generated: ${formatDate(new Date())} by [gulp-parker](https://github.com/PavelDemyanenko/gulp-parker).`,
+		''
+	);
+
+	return lines.join('\n');
+}
+
+module.exports = function gulpParker(options) {
+	const opts = Object.assign({ metrics: false, file: false, title: false }, options);
+	const metrics = loadMetrics(opts.metrics);
+	const metricNames = new Map(metrics.map((metric) => [metric.id, metric.name]));
+	const parker = new Parker(metrics);
+	const sections = [];
+
+	return new Transform({
+		objectMode: true,
+
+		transform(file, enc, cb) {
+			if (file.isNull()) {
+				cb(null, file);
+				return;
+			}
+
+			if (file.isStream()) {
+				cb(new PluginError(PLUGIN_NAME, 'Streaming not supported', { fileName: file.path }));
+				return;
+			}
+
+			let results;
+			try {
+				results = parker.run(file.contents.toString()) || {};
+			} catch (err) {
+				cb(new PluginError(PLUGIN_NAME, err, { fileName: file.path }));
+				return;
+			}
+
+			const rows = Object.keys(results).map((id) => [metricNames.get(id) || id, results[id]]);
+			const relativePath = path.relative(process.cwd(), file.path).split(path.sep).join('/');
+
+			file.parker = results;
+			logResults(file.path, rows);
+			sections.push({ filePath: relativePath, rows });
+
+			cb(null, file);
+		},
+
+		flush(cb) {
+			if (!opts.file || sections.length === 0) {
+				cb();
+				return;
+			}
+
+			const reportPath = path.resolve(String(opts.file));
+			const report = buildReport(opts.title || DEFAULT_TITLE, sections);
+
+			fs.promises.mkdir(path.dirname(reportPath), { recursive: true })
+				.then(() => fs.promises.writeFile(reportPath, report))
+				.then(() => {
+					log(`Logged in ${colors.yellow(String(opts.file))}`);
+					cb();
+				})
+				.catch((err) => cb(new PluginError(PLUGIN_NAME, err)));
+		}
 	});
 };
